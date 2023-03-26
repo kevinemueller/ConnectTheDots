@@ -15,7 +15,7 @@ class Node {
         this.partnerNodeID = null;
         
         // Time To Live
-        this.ttl = random(100, 150);
+        this.ttl = random(100, 300);
 
         this.connectedX = 0;
         this.connectedY = 0;
@@ -24,10 +24,13 @@ class Node {
         this.YPos = random(0, window.innerHeight);
 
         // Set Speed/Velocity
-        this.XVelocity = random(-2, 2);
-        this.YVelocity = random(-2, 2);
+        this.XVelocity = random(-3, 2) + 1;
+        this.YVelocity = random(-3, 2) + 1;
 
         this.opacity = 0;
+        this.r = random(1, 255);
+        this.g = random(1, 255);
+        this.b = random(1, 255);
 
         // If is new node
         this.newNode = true;
@@ -44,7 +47,7 @@ class Node {
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext('2d');
 
-let nodes = new Array(10);
+let nodes = new Array(25);
 
 for(let i = 0; i < nodes.length; i++)
     nodes[i] = new Node(i);
@@ -69,9 +72,6 @@ function animate() {
             if(!element.latched) {
                 
                 for(let i = 0; i < nodes.length; i++) {
-                    
-                    
-                    
 
                     if(element.nodeID != i && !nodes[i].attached) {
                         let dist = Math.sqrt( Math.pow((element.XPos-nodes[i].XPos), 2) + Math.pow((element.YPos-nodes[i].YPos), 2));
@@ -93,12 +93,6 @@ function animate() {
             }
         }
 
-        
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${element.opacity})`;
-        ctx.fillRect(element.XPos - 5, element.YPos - 5, 10, 10);
-        ctx.fill();
-
         if(element.latched) {
             if(nodes[element.partnerNodeID].attached) {
                 ctx.beginPath();
@@ -106,10 +100,15 @@ function animate() {
                 ctx.lineTo(nodes[element.partnerNodeID].XPos, nodes[element.partnerNodeID].YPos);
     
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = `rgba(255, 255, 255, ${element.opacity})`;
+                ctx.strokeStyle = `rgba(${element.r}, ${element.g}, ${element.b}, ${element.opacity})`;
                 ctx.stroke();
             }
         }
+
+        ctx.fillStyle = `rgba(${element.r}, ${element.g}, ${element.b}, ${element.opacity})`;
+        ctx.beginPath();
+        ctx.arc(element.XPos, element.YPos, 4, Math.PI, 3*Math.PI);
+        ctx.fill();
 
         element.XPos += element.XVelocity;
         element.YPos += element.YVelocity;
@@ -120,8 +119,13 @@ function animate() {
         if(element.YPos < 0 || element.YPos > window.innerHeight)
             element.YVelocity = element.YVelocity * -1;
 
-        if(!(element.latched && element.attached))
+        if(!element.latched) {
             element.ttl-=1;
+        }
+        else {
+            element.ttl-=0.5;
+        }
+            
 
         if(element.ttl <= 0) {
 
