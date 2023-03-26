@@ -28,9 +28,9 @@ class Node {
         this.YVelocity = random(-3, 2) + 1;
 
         this.opacity = 0;
-        this.r = random(1, 255);
-        this.g = random(1, 255);
-        this.b = random(1, 255);
+        this.r = random(0, 255);
+        this.g = random(0, 255);
+        this.b = random(0, 255);
 
         // If is new node
         this.newNode = true;
